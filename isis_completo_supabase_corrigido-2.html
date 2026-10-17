@@ -1,0 +1,390 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Isis — Rotina & Novas Experiências</title>
+<style>
+:root{
+  --bg:#f6f7fb;--card:#fff;--text:#18181b;--muted:#71717a;
+  --primary:#6d4aff;--primary2:#8b5cf6;--border:#e8e8ef;
+  --green:#16a34a;--shadow:0 10px 30px rgba(30,25,70,.08)
+}
+*{box-sizing:border-box} body{margin:0;font-family:Inter,Arial,sans-serif;background:var(--bg);color:var(--text)}
+button,input{font:inherit} button{cursor:pointer;border:0}
+.app{display:flex;min-height:100vh}.sidebar{width:245px;background:#fff;border-right:1px solid var(--border);padding:25px 16px;position:fixed;height:100vh}
+.logo{font-size:24px;font-weight:800;margin:0 10px 30px}.logo span{color:var(--primary)}
+.nav button{display:block;width:100%;padding:13px 14px;margin:5px 0;border-radius:12px;background:transparent;text-align:left;color:#52525b}
+.nav button.active,.nav button:hover{background:#f0ecff;color:var(--primary);font-weight:700}
+.main{margin-left:245px;width:calc(100% - 245px);padding:28px 5%;max-width:1500px}
+.top{display:flex;justify-content:space-between;align-items:center;margin-bottom:25px}
+.greeting h1{margin:0 0 5px;font-size:30px}.greeting p{margin:0;color:var(--muted)}
+.avatar{width:44px;height:44px;border-radius:50%;background:linear-gradient(135deg,var(--primary),#c4b5fd);color:#fff;display:grid;place-items:center;font-weight:800}
+.page{display:none}.page.active{display:block}
+.hero{background:linear-gradient(120deg,#25145f,#6d4aff);color:#fff;border-radius:24px;padding:30px;display:flex;justify-content:space-between;gap:25px;box-shadow:var(--shadow)}
+.hero h2{font-size:29px;margin:0 0 10px}.hero p{max-width:620px;color:#e9e4ff}
+.btn{padding:11px 16px;border-radius:12px;font-weight:700}.btn.primary{background:#fff;color:var(--primary)}.btn.dark{background:var(--primary);color:#fff}.btn.light{background:#f2efff;color:var(--primary)}
+.grid{display:grid;grid-template-columns:repeat(3,1fr);gap:18px;margin-top:22px}.two{grid-template-columns:2fr 1fr}
+.card{background:var(--card);border:1px solid var(--border);border-radius:18px;padding:20px;box-shadow:var(--shadow)}
+.card h3{margin:0 0 7px}.muted{color:var(--muted)}.section-title{display:flex;justify-content:space-between;align-items:center;margin:30px 0 14px}.section-title h2{margin:0}
+.task{display:flex;align-items:center;gap:12px;padding:13px 0;border-bottom:1px solid var(--border)}.task:last-child{border-bottom:0}
+.task input{width:19px;height:19px}.task.done label{text-decoration:line-through;color:#aaa}
+.add{display:flex;gap:8px;margin-top:14px}.add input{flex:1;padding:12px;border:1px solid var(--border);border-radius:11px;outline:none}
+.hobby{overflow:hidden;padding:0}.hobby-img{height:145px;background-size:cover;background-position:center;display:grid;place-items:center;font-size:50px}
+.hobby-body{padding:17px}.tag{display:inline-block;background:#f0ecff;color:var(--primary);padding:5px 9px;border-radius:20px;font-size:12px;font-weight:700;margin-bottom:9px}
+.meta{display:flex;gap:14px;color:var(--muted);font-size:13px;margin:10px 0}.hobby-actions{display:flex;gap:8px}.hobby-actions button{flex:1}
+.search{display:flex;gap:10px;margin:20px 0}.search input{flex:1;padding:14px 16px;border:1px solid var(--border);border-radius:13px}
+.filters{display:flex;gap:8px;overflow:auto;margin-bottom:18px}.filter{padding:9px 13px;border-radius:20px;background:#fff;border:1px solid var(--border);white-space:nowrap}.filter.active{background:var(--primary);color:#fff}
+.post{display:flex;gap:12px}.post .avatar{flex:none}.post p{line-height:1.5}.post img{width:100%;height:200px;object-fit:cover;border-radius:14px;margin-top:10px}
+#realMap{height:420px;width:100%;border-radius:16px;z-index:1}.map-tools{display:flex;flex-wrap:wrap;gap:9px;margin:16px 0}.map-tools input,.map-tools select{flex:1;min-width:160px;padding:12px;border:1px solid var(--border);border-radius:11px;background:#fff;color:var(--text)}.map-status{padding:11px 13px;border-radius:10px;background:#f5f3ff;color:#4c1d95;margin:12px 0;font-size:14px}.place-card{display:flex;flex-direction:column;gap:8px}.place-card .place-meta{color:var(--muted);font-size:13px}.place-card a{color:var(--primary);font-weight:700;text-decoration:none}.map-legend{font-size:12px;color:var(--muted);margin-top:10px}@media(max-width:520px){#realMap{height:350px}.map-tools input,.map-tools select{min-width:100%}}
+.profile{display:flex;align-items:center;gap:18px}.bigavatar{width:80px;height:80px;border-radius:50%;display:grid;place-items:center;background:linear-gradient(135deg,var(--primary),#c4b5fd);color:#fff;font-size:27px;font-weight:800}
+.modal{position:fixed;inset:0;background:rgba(0,0,0,.45);display:none;place-items:center;padding:20px;z-index:5}.modal.show{display:grid}.modal-box{background:#fff;border-radius:20px;padding:24px;width:min(520px,100%)}.modal-box input,.modal-box textarea,.modal-box select{width:100%;padding:12px;border:1px solid var(--border);border-radius:10px;margin:7px 0 14px}.modal-actions{display:flex;justify-content:flex-end;gap:8px}
+.toast{position:fixed;bottom:25px;right:25px;background:#18181b;color:#fff;padding:13px 17px;border-radius:12px;display:none;z-index:50}
+@media(max-width:850px){.sidebar{width:72px;padding:18px 8px}.logo{font-size:0;text-align:center}.logo span{font-size:24px}.nav button{font-size:0;text-align:center}.nav button:first-letter{font-size:20px}.main{margin-left:72px;width:calc(100% - 72px);padding:20px 4%}.grid,.two{grid-template-columns:1fr}.hero{display:block}.hero button{margin-top:10px}}
+@media(max-width:520px){.main{padding:15px}.top h1{font-size:24px}.grid{gap:12px}.hero{padding:22px}.hero h2{font-size:24px}}
+
+/* Personalização, tarefas detalhadas e conta local da versão de demonstração */
+.field-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
+.field{display:flex;flex-direction:column;gap:6px;margin:8px 0}.field input,.field textarea,.field select{width:100%;padding:12px;border:1px solid var(--border);border-radius:10px;font:inherit;background:#fff;color:#18181b}
+.profile-photo{width:84px;height:84px;border-radius:50%;object-fit:cover;background:#eee;display:grid;place-items:center;color:#fff;font-size:26px;font-weight:800;flex:none}
+.task-item{padding:14px 0;border-bottom:1px solid var(--border)}.task-head{display:flex;align-items:center;gap:10px}.task-head label{flex:1;font-weight:600}.task-extra{margin:10px 0 0 30px}.task-extra textarea{width:100%;padding:10px;border:1px solid var(--border);border-radius:9px;font:inherit;min-height:60px}.checklist-line{display:flex;gap:8px;align-items:center;margin:8px 0}.checklist-line input[type=text]{flex:1;padding:8px;border:1px solid var(--border);border-radius:8px}.tiny-btn{padding:6px 9px;border-radius:8px;background:#f2efff;color:var(--primary)}
+.auth-screen{position:fixed;inset:0;background:linear-gradient(135deg,#241452,#6d4aff);z-index:30;display:none;align-items:center;justify-content:center;padding:18px}.auth-screen.show{display:flex}.auth-card{background:#fff;width:min(440px,100%);padding:26px;border-radius:22px;box-shadow:0 20px 70px #140b3840}.auth-card h1{margin:0 0 6px}.auth-card input{width:100%;padding:12px;border:1px solid var(--border);border-radius:10px;margin:7px 0 13px}.auth-note{font-size:12px;line-height:1.5;color:#71717a}.auth-feedback{display:none;margin:12px 0;padding:11px 12px;border-radius:10px;font-size:13px;line-height:1.45;overflow-wrap:anywhere}.auth-feedback.show{display:block}.auth-feedback.error{background:#fff1f2;color:#9f1239;border:1px solid #fecdd3}.auth-feedback.info{background:#f0f9ff;color:#075985;border:1px solid #bae6fd}.auth-feedback.success{background:#f0fdf4;color:#166534;border:1px solid #bbf7d0}.profile-link{border:0;background:transparent;padding:0;color:var(--primary);font-weight:800;cursor:pointer;text-align:left}.custom-preview{border:1px solid var(--border);padding:22px;border-radius:20px;margin-top:18px;background:linear-gradient(135deg,#fff,#f7f5ff);box-shadow:0 12px 28px rgba(40,25,90,.08)}
+.custom-shell{overflow:hidden;border-radius:22px;border:1px solid var(--border);background:#fff;box-shadow:var(--shadow)}
+.custom-banner{padding:22px;background:linear-gradient(135deg,var(--primary),var(--primary2));color:white;display:flex;align-items:center;justify-content:space-between;gap:12px}
+.custom-banner h3{margin:0;font-size:22px}.custom-banner p{margin:7px 0 0;color:#ffffffdc;font-size:13px}
+.custom-body{padding:20px}.custom-section-label{font-size:12px;text-transform:uppercase;letter-spacing:.09em;font-weight:800;color:var(--muted);margin:4px 0 12px}
+.swatches{display:flex;gap:10px;flex-wrap:wrap;margin:8px 0 16px}.swatch{width:38px;height:38px;border-radius:50%;border:3px solid white;box-shadow:0 0 0 1px #d8d8e4;position:relative;padding:0}.swatch.active{box-shadow:0 0 0 3px var(--text)}.swatch.active:after{content:'✓';position:absolute;inset:0;display:grid;place-items:center;color:white;font-weight:900;text-shadow:0 1px 3px #333}
+.custom-control{background:#fafaff;border:1px solid var(--border);border-radius:16px;padding:14px}.custom-control .field{margin:0 0 12px}.custom-control .field:last-child{margin-bottom:0}.color-row{display:flex;align-items:center;gap:12px}.color-row input[type=color]{width:48px;height:42px;padding:3px;border:1px solid var(--border);border-radius:10px;background:white}.preview-mini{border:1px solid #e7e4f5;border-radius:16px;padding:14px;background:white}.preview-chip{display:inline-flex;align-items:center;gap:6px;background:#f0ecff;color:var(--primary);padding:7px 10px;border-radius:20px;font-size:12px;font-weight:800}.custom-actions{display:flex;gap:10px;flex-wrap:wrap;margin-top:16px}.admin-pill{display:inline-flex;align-items:center;gap:6px;background:#fff3cd;color:#7a4a00;padding:5px 9px;border-radius:20px;font-size:11px;font-weight:800;margin:0 0 8px}.delete-post{margin-top:12px;background:#fff1f2;color:#be123c;border:1px solid #fecdd3;border-radius:9px;padding:8px 11px;font-size:12px;font-weight:800}.post-content{min-width:0;flex:1}.admin-note{border:1px solid #f3d58a;background:#fff9e8;color:#7a4a00;border-radius:14px;padding:13px 15px;font-size:13px;line-height:1.5}
+@media(max-width:600px){.field-grid{grid-template-columns:1fr}}
+
+</style>
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" crossorigin=""/>
+</head>
+<body>
+<div class="auth-screen" id="authScreen">
+ <div class="auth-card"><div class="logo" style="margin:0 0 14px;color:var(--primary)">Isis<span>✦</span></div>
+  <h1 id="authHeading">Entre na sua conta Isis</h1><p class="muted" id="authSub">Entre com seu e-mail e senha do Supabase.</p>
+  <label for="authEmail">E-mail</label><input id="authEmail" type="email" autocomplete="email" value="barbaraborlin3@gmail.com" placeholder="voce@email.com">
+  <label for="authPassword">Senha</label><input id="authPassword" type="password" autocomplete="current-password" placeholder="Digite sua senha">
+  <button class="btn dark" style="width:100%" id="authAction" type="button" onclick="submitAuth()">Entrar</button>
+  <div id="authFeedback" class="auth-feedback" role="status" aria-live="polite"></div>
+  <button class="btn light" style="width:100%;margin-top:8px" id="authToggle" type="button" onclick="toggleAuthMode()">Criar conta nova</button>
+  <p class="auth-note">Conta protegida pela autenticação do Supabase. Se a confirmação de e-mail estiver ativa, confirme o endereço antes de entrar. Nunca compartilhe sua senha.</p>
+ </div>
+</div>
+<div class="app">
+<aside class="sidebar">
+  <div class="logo">Isis<span>✦</span></div>
+  <nav class="nav">
+    <button class="active" data-page="home">🏠 &nbsp; Início</button>
+    <button data-page="routine">📋 &nbsp; Minha rotina</button>
+    <button data-page="discover">✨ &nbsp; Descobrir</button>
+    <button data-page="map">📍 &nbsp; Explorar mapa</button>
+    <button data-page="community">👥 &nbsp; Comunidade</button>
+    <button data-page="saved">❤️ &nbsp; Meus hobbies</button>
+    <button data-page="profile">👤 &nbsp; Perfil</button>
+  </nav>
+</aside>
+
+<main class="main">
+<header class="top">
+  <div class="greeting"><h1 id="pageTitle">Olá, Babi! 👋</h1><p id="pageSub">Organize seu dia e descubra algo novo.</p></div>
+  <button class="avatar" id="headerAvatar" onclick="go('profile')" title="Abrir seu perfil">B</button>
+</header>
+
+<section id="home" class="page active">
+  <div class="hero"><div><h2>Que tal sair um pouco da rotina?</h2><p>Encontre uma experiência perto de você e transforme uma simples descoberta em um novo hobby.</p><button class="btn primary" onclick="go('discover')">Descobrir algo novo ✨</button></div><div style="font-size:80px">🌱</div></div>
+  <div class="section-title"><h2>Hoje na sua rotina</h2><button class="btn light" onclick="go('routine')">Ver tudo</button></div>
+  <div class="grid two">
+    <div class="card"><h3>Suas tarefas</h3><div id="homeTasks"></div></div>
+    <div class="card"><h3>Seu progresso</h3><p class="muted">Tarefas concluídas hoje</p><div style="font-size:38px;font-weight:800" id="progress">0%</div><p class="muted">Continue assim!</p></div>
+  </div>
+  <div class="section-title"><h2>Uma sugestão para hoje</h2></div>
+  <div id="homeHobby" class="grid"></div>
+</section>
+
+<section id="routine" class="page">
+  <div class="card"><h2>Minha rotina</h2><p class="muted">Organize suas atividades e não deixe o dia passar sem fazer o que importa.</p>
+    <div class="add"><input id="taskInput" placeholder="Ex.: Estudar por 1 hora" onkeydown="if(event.key==='Enter')addTask()"><button class="btn dark" onclick="addTask()">+ Adicionar</button></div>
+    <p class="muted" style="font-size:13px">Cada tarefa pode ter uma lista de etapas e suas próprias anotações.</p>
+    <div id="tasks" style="margin-top:15px"></div>
+  </div>
+</section>
+
+<section id="discover" class="page">
+  <div class="card"><h2>Descubra novos hobbies</h2><p class="muted">Experiências escolhidas para você experimentar algo diferente.</p>
+    <div class="search"><input id="searchInput" placeholder="Procure por cerâmica, esporte, museu..." oninput="renderHobbies()"><button class="btn dark">Buscar</button></div>
+    <div class="filters"><button class="filter active" onclick="setFilter('Todos',this)">Todos</button><button class="filter" onclick="setFilter('Arte',this)">🎨 Arte</button><button class="filter" onclick="setFilter('Esporte',this)">🏀 Esporte</button><button class="filter" onclick="setFilter('Cultura',this)">🏛️ Cultura</button><button class="filter" onclick="setFilter('Natureza',this)">🌿 Natureza</button></div>
+  </div>
+  <div id="hobbyGrid" class="grid"></div>
+</section>
+
+<section id="map" class="page">
+  <div class="card">
+    <h2>Explorar perto de você</h2><p class="muted">Mapa interativo gratuito, localização do celular e busca de lugares com dados abertos. Não precisa de chave do Google Maps.</p>
+    <div class="map-tools">
+      <select id="placeCategory" aria-label="Tipo de lugar"><option value="all">Todos os lugares</option><option value="sports">Esportes e quadras</option><option value="parks">Parques e natureza</option><option value="culture">Museus e cultura</option><option value="food">Cafés e restaurantes</option><option value="arts">Arte e atividades</option></select>
+      <select id="searchRadius" aria-label="Raio de busca"><option value="2000">Até 2 km</option><option value="5000" selected>Até 5 km</option><option value="10000">Até 10 km</option></select>
+      <button class="btn dark" id="findPlacesBtn" onclick="findPlaces()">Buscar lugares</button><button class="btn light" id="locateBtn" onclick="locateMe()">📍 Usar minha localização</button>
+    </div>
+    <div class="map-tools"><input id="placeTextFilter" placeholder="Filtrar resultados (ex.: parque, quadra)" oninput="renderPlaceCards()" aria-label="Filtrar resultados"></div>
+    <div id="mapStatus" class="map-status" role="status">Carregando mapa gratuito…</div><div id="realMap" aria-label="Mapa de lugares próximos"></div>
+    <p class="map-legend">Mapa © OpenStreetMap contributors. Os resultados dependem dos dados disponíveis e podem estar incompletos. Confirme horários, preços e endereço antes de sair.</p>
+  </div>
+  <div class="section-title"><h2>Lugares encontrados</h2><span class="muted" id="placeCount">0 lugares</span></div><div id="mapCards" class="grid"></div>
+</section>
+
+<section id="community" class="page">
+  <div class="card"><h2>Comunidade</h2><p class="muted">Veja o que outras pessoas descobriram e compartilhe suas experiências.</p><div class="admin-note" id="adminModerationNote" style="display:none;margin:12px 0">⚙ <b>Modo administradora ativo.</b> Você pode moderar a comunidade e excluir publicações de qualquer conta. As exclusões são permanentes.</div><button class="btn dark" onclick="openPost()">+ Compartilhar experiência</button></div>
+  <div id="posts" style="margin-top:18px"></div>
+</section>
+
+<section id="saved" class="page">
+  <div class="card"><h2>Meus hobbies</h2><p class="muted">Aqui ficam as experiências que você salvou.</p></div>
+  <div id="savedGrid" class="grid"></div>
+</section>
+
+<section id="profile" class="page">
+ <div class="card">
+  <div class="profile"><img id="profilePhotoPreview" class="profile-photo" alt="Foto do perfil" src="" onerror="this.style.display='none';document.getElementById('profileInitial').style.display='grid'"><div id="profileInitial" class="profile-photo">B</div><div><h2 id="profileDisplayName" style="margin:0">Meu perfil</h2><p id="profileBioPreview" class="muted">Conte um pouco sobre você.</p><label class="btn light" for="profilePhotoInput" style="display:inline-block;cursor:pointer">Enviar foto</label><input id="profilePhotoInput" type="file" accept="image/*" style="display:none" onchange="uploadProfilePhoto(event)"></div></div>
+  <p class="muted">Personalize seu perfil e deixe a Isis com a sua cara. As alterações são salvas neste navegador e sincronizadas com sua conta quando estiver conectada.</p>
+  <div class="field-grid">
+   <div class="field"><label for="profileName">Nome</label><input id="profileName" maxlength="60" placeholder="Seu nome"></div>
+   <div class="field"><label for="profileAge">Idade</label><input id="profileAge" type="number" min="13" max="120" placeholder="Sua idade"></div>
+   <div class="field"><label for="profileLocation">Onde você mora</label><input id="profileLocation" maxlength="100" placeholder="Cidade ou região"></div>
+   <div class="field"><label for="profileTagline">Como quer se descrever?</label><input id="profileTagline" maxlength="100" placeholder="Ex.: Exploradora de novos hobbies"></div>
+  </div>
+  <div class="field"><label for="profileBio">Biografia (opcional)</label><textarea id="profileBio" rows="3" maxlength="500" placeholder="Fale um pouco sobre seus interesses..."></textarea></div>
+  <button class="btn dark" onclick="saveProfile()">Salvar perfil</button>
+ </div>
+ <div class="section-title"><h2>Personalize seu aplicativo</h2></div>
+ <div class="card" style="padding:0;overflow:hidden">
+  <div class="custom-banner"><div><div class="custom-section-label" style="color:#ffffffb8;margin-top:0">SEU ESPAÇO, SUAS REGRAS</div><h3>Deixe a Isis com a sua identidade</h3><p>Veja as mudanças na prévia e aplique quando estiver do seu jeito.</p></div><div style="font-size:42px">✦</div></div>
+  <div class="custom-body">
+   <div class="field-grid">
+    <div class="custom-control"><div class="custom-section-label">Identidade</div><div class="field"><label for="customAppName">Nome do aplicativo</label><input id="customAppName" maxlength="35" placeholder="Isis" oninput="updateCustomizationPreview()"></div><div class="field"><label for="customWelcome">Mensagem da tela inicial</label><input id="customWelcome" maxlength="100" placeholder="Organize seu dia e descubra algo novo." oninput="updateCustomizationPreview()"></div></div>
+    <div class="custom-control"><div class="custom-section-label">Escolha uma paleta</div><div class="swatches"><button class="swatch" style="background:#6d4aff" aria-label="Roxo" title="Roxo" onclick="chooseTheme('#6d4aff','#f6f7fb',this)"></button><button class="swatch" style="background:#e04f9b" aria-label="Rosa" title="Rosa" onclick="chooseTheme('#e04f9b','#fff7fb',this)"></button><button class="swatch" style="background:#0f9f8f" aria-label="Verde" title="Verde" onclick="chooseTheme('#0f9f8f','#f3fbf8',this)"></button><button class="swatch" style="background:#2878d0" aria-label="Azul" title="Azul" onclick="chooseTheme('#2878d0','#f4f8ff',this)"></button><button class="swatch" style="background:#e07826" aria-label="Laranja" title="Laranja" onclick="chooseTheme('#e07826','#fff9f2',this)"></button><button class="swatch" style="background:#252525" aria-label="Preto" title="Preto e branco" onclick="chooseTheme('#252525','#f7f7f7',this)"></button></div><div class="field"><label for="customColor">Ou escolha sua própria cor</label><div class="color-row"><input id="customColor" type="color" value="#6d4aff" oninput="updateCustomizationPreview()"><span class="muted" id="customColorLabel">Roxo Isis</span></div></div><div class="field"><label for="customBg">Cor de fundo</label><div class="color-row"><input id="customBg" type="color" value="#f6f7fb" oninput="updateCustomizationPreview()"><span class="muted">Fundo das telas</span></div></div></div>
+   </div>
+   <div class="custom-preview" id="customPreview"><div class="custom-section-label">PRÉVIA DO APLICATIVO</div><div class="preview-mini"><div style="display:flex;justify-content:space-between;align-items:center;gap:10px"><strong id="customPreviewName">Isis ✦</strong><span class="preview-chip" id="customPreviewChip">✦ Seu dia</span></div><p id="customPreviewText" class="muted" style="margin:12px 0">Organize seu dia e descubra algo novo.</p><div style="height:7px;background:#eeeaf8;border-radius:20px;overflow:hidden"><div id="customPreviewBar" style="height:100%;width:58%;border-radius:20px;background:#6d4aff"></div></div></div><div class="custom-actions"><button class="btn dark" onclick="saveCustomization()">✓ Aplicar personalização</button><button class="btn light" onclick="resetCustomization()">Restaurar padrão</button></div></div>
+   <p class="auth-note" style="margin-bottom:0">As mudanças de aparência são salvas na sua conta quando você estiver conectada. Sua foto de perfil é configurada na seção acima.</p>
+  </div>
+ </div>
+ <div class="section-title"><h2>Resumo</h2></div>
+ <div class="grid"><div class="card"><h3>Hobbies salvos</h3><strong id="statHobbies">0</strong></div><div class="card"><h3>Experiências compartilhadas</h3><strong id="statPosts">0</strong></div><div class="card"><h3>Tarefas concluídas</h3><strong id="statDone">0</strong></div></div>
+ <div class="card" style="margin-top:18px"><h3>Conta neste dispositivo</h3><p class="muted">Sua conta usa autenticação Supabase. Perfil, tarefas, hobbies salvos e publicações podem sincronizar entre aparelhos.</p><button class="btn light" onclick="logoutLocal()">Sair da conta</button></div>
+</section>
+</main>
+</div>
+
+<div class="modal" id="modal">
+ <div class="modal-box"><h2 id="modalTitle">Compartilhar experiência</h2>
+  <label>O que você experimentou?</label><input id="postTitle" placeholder="Ex.: Minha primeira aula de cerâmica">
+  <label>Conte como foi</label><textarea id="postText" rows="4" placeholder="O que você achou? Recomendaria?"></textarea>
+  <label>Nota</label><select id="postRating"><option>5 — Amei!</option><option>4 — Gostei</option><option>3 — Foi legal</option><option>2 — Não curti muito</option><option>1 — Não gostei</option></select>
+  <div class="modal-actions"><button class="btn light" onclick="closePost()">Cancelar</button><button class="btn dark" onclick="publishPost()">Publicar</button></div>
+ </div>
+</div>
+<div class="toast" id="toast"></div>
+
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" crossorigin=""></script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script>
+const hobbies=[
+ {id:1,title:"Oficina de Cerâmica",cat:"Arte",emoji:"🏺",place:"Ateliê Criativo",price:"R$ 60–120",distance:"2,4 km",desc:"Aprenda a modelar sua primeira peça e leve sua criação para casa."},
+ {id:2,title:"Aula de Basquete",cat:"Esporte",emoji:"🏀",place:"Centro Esportivo",price:"Grátis",distance:"3,1 km",desc:"Treino recreativo para conhecer pessoas e experimentar um esporte."},
+ {id:3,title:"Museu & Café",cat:"Cultura",emoji:"🏛️",place:"Museu da Cidade",price:"R$ 10–30",distance:"5,7 km",desc:"Uma tarde para conhecer exposições e terminar com um café."},
+ {id:4,title:"Pintura em Tela",cat:"Arte",emoji:"🎨",place:"Casa das Artes",price:"R$ 45–90",distance:"4,2 km",desc:"Uma experiência relaxante para pintar sem precisar ter experiência."},
+ {id:5,title:"Trilha no Parque",cat:"Natureza",emoji:"🌿",place:"Parque Natural",price:"Grátis",distance:"7,8 km",desc:"Caminhada leve, natureza e uma pausa do celular."},
+ {id:6,title:"Aula de Dança",cat:"Esporte",emoji:"💃",place:"Studio Movimento",price:"R$ 35–70",distance:"3,8 km",desc:"Experimente uma aula e descubra um ritmo novo."}
+];
+let tasks=JSON.parse(localStorage.getItem('isisTasks')||'[]');
+let saved=JSON.parse(localStorage.getItem('isisSaved')||'[]');
+let posts=JSON.parse(localStorage.getItem('isisPosts')||'[]');
+let filter="Todos";
+let profileData=JSON.parse(localStorage.getItem('isisProfile')||'{}');
+let customization=JSON.parse(localStorage.getItem('isisCustomization')||'{}');
+let authMode='login';
+let currentUser=null;
+let isAdmin=false;
+const SUPABASE_URL='https://ujyrhgcttnluonujdbxi.supabase.co';
+const SUPABASE_PUBLISHABLE_KEY='sb_publishable_reKXz_0K_mjfrb5Ur4oVhg_DMbdCtWY';
+const supabaseClient=(window.supabase&&window.supabase.createClient)?window.supabase.createClient(SUPABASE_URL,SUPABASE_PUBLISHABLE_KEY):null;
+let cloudReady=false;
+
+function go(page){
+ document.querySelectorAll('.page').forEach(x=>x.classList.remove('active'));
+ document.getElementById(page).classList.add('active');
+ document.querySelectorAll('.nav button').forEach(x=>x.classList.toggle('active',x.dataset.page===page));
+ const names={home:[`Olá, ${profileData.name||'Babi'}! 👋`,customization.welcome||"Organize seu dia e descubra algo novo."],routine:["Minha rotina","Suas tarefas, lembretes e compromissos."],discover:["Descubra","Talvez seu próximo hobby esteja perto de você."],map:["Explorar mapa","Encontre experiências pela região."],community:["Comunidade","Experiências reais de pessoas reais."],saved:["Meus hobbies","Suas descobertas favoritas."],profile:["Seu perfil","Acompanhe suas descobertas."]};
+ document.getElementById('pageTitle').textContent=names[page][0];document.getElementById('pageSub').textContent=names[page][1];
+ if(page==="home")renderHome(); if(page==="routine")renderTasks(); if(page==="discover")renderHobbies(); if(page==="map")renderMap(); if(page==="community")renderPosts(); if(page==="saved")renderSaved(); if(page==="profile")renderProfile();
+}
+document.querySelectorAll('.nav button').forEach(b=>b.onclick=()=>go(b.dataset.page));
+
+function save(){
+ localStorage.setItem('isisTasks',JSON.stringify(tasks));localStorage.setItem('isisSaved',JSON.stringify(saved));localStorage.setItem('isisPosts',JSON.stringify(posts));
+ if(cloudReady&&currentUser){
+  const payload={profile:profileData,customization,tasks,saved};
+  supabaseClient.from('isis_user_data').upsert({user_id:currentUser.id,data:payload,updated_at:new Date().toISOString()},{onConflict:'user_id'}).then(({error})=>{if(error)console.error('Falha ao sincronizar dados da Isis:',error);});
+ }
+}
+function addTask(){
+ const input=document.getElementById('taskInput'),v=input.value.trim();if(!v)return;
+ tasks.push({id:Date.now(),text:v,done:false,checklist:[],notes:''});input.value="";save();renderTasks();renderHome();toast("Tarefa adicionada!");
+}
+function toggleTask(id){const t=tasks.find(x=>x.id===id);if(!t)return;t.done=!t.done;save();renderTasks();renderHome();renderProfile()}
+function escapeText(s){return String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));}
+function taskHTML(t){if(!t.checklist)t.checklist=[];return `<div class="task-item ${t.done?'done':''}"><div class="task-head"><input type="checkbox" ${t.done?'checked':''} onchange="toggleTask(${t.id})" aria-label="Concluir tarefa"><label>${escapeText(t.text)}</label><button class="tiny-btn" onclick="toggleTaskDetails(${t.id})">${t.detailsOpen?'Fechar detalhes':'Checklist / notas'}</button><button class="tiny-btn" onclick="deleteTask(${t.id})" aria-label="Excluir tarefa">✕</button></div><div class="task-extra" id="task-extra-${t.id}" style="display:${t.detailsOpen?'block':'none'}"><strong>Checklist</strong><div>${t.checklist.map((c,i)=>`<div class="checklist-line"><input type="checkbox" ${c.done?'checked':''} onchange="toggleChecklist(${t.id},${i})"><span style="flex:1;${c.done?'text-decoration:line-through;color:#888':''}">${escapeText(c.text)}</span><button class="tiny-btn" onclick="removeChecklist(${t.id},${i})">Remover</button></div>`).join('')}</div><div class="add"><input id="check-input-${t.id}" placeholder="Adicionar etapa" onkeydown="if(event.key==='Enter')addChecklist(${t.id})"><button class="btn light" onclick="addChecklist(${t.id})">+ Etapa</button></div><div class="field"><label for="notes-${t.id}">Anotações desta tarefa</label><textarea id="notes-${t.id}" placeholder="Escreva lembretes ou detalhes..." oninput="updateTaskNotes(${t.id},this.value)">${escapeText(t.notes||'')}</textarea></div></div></div>`}
+function renderTasks(){const el=document.getElementById('tasks');if(el)el.innerHTML=tasks.length?tasks.map(taskHTML).join(''):'<p class="muted">Você ainda não adicionou tarefas. Comece com uma acima.</p>'}
+function toggleTaskDetails(id){const t=tasks.find(x=>x.id===id);if(!t)return;t.detailsOpen=!t.detailsOpen;renderTasks()}
+function addChecklist(id){const t=tasks.find(x=>x.id===id),input=document.getElementById(`check-input-${id}`),v=input?.value.trim();if(!t||!v)return;t.checklist=t.checklist||[];t.checklist.push({text:v,done:false});t.detailsOpen=true;save();renderTasks()}
+function toggleChecklist(id,i){const t=tasks.find(x=>x.id===id);if(!t||!t.checklist?.[i])return;t.checklist[i].done=!t.checklist[i].done;save();renderTasks()}
+function removeChecklist(id,i){const t=tasks.find(x=>x.id===id);if(!t)return;t.checklist.splice(i,1);save();renderTasks()}
+function updateTaskNotes(id,value){const t=tasks.find(x=>x.id===id);if(!t)return;t.notes=value;save()}
+function deleteTask(id){if(!confirm('Excluir esta tarefa?'))return;tasks=tasks.filter(x=>x.id!==id);save();renderTasks();renderHome();renderProfile()}
+function renderHome(){
+ document.getElementById('homeTasks').innerHTML=tasks.length?tasks.slice(0,4).map(taskHTML).join(''):'<p class="muted">Nenhuma tarefa para hoje.</p>';
+ const done=tasks.filter(x=>x.done).length;document.getElementById('progress').textContent=(tasks.length?Math.round(done/tasks.length*100):0)+"%";
+ document.getElementById('homeHobby').innerHTML=hobbyCard(hobbies[0]);
+}
+function setFilter(f,el){filter=f;document.querySelectorAll('.filter').forEach(x=>x.classList.remove('active'));el.classList.add('active');renderHobbies()}
+function renderHobbies(){
+ const q=document.getElementById('searchInput')?.value.toLowerCase()||"";
+ const list=hobbies.filter(h=>(filter==="Todos"||h.cat===filter)&&(`${h.title} ${h.place} ${h.cat}`.toLowerCase().includes(q)));
+ document.getElementById('hobbyGrid').innerHTML=list.length?list.map(hobbyCard).join(''):'<div class="card"><p>Não encontramos esse hobby ainda.</p></div>';
+}
+function hobbyCard(h){
+ const isSaved=saved.includes(h.id);
+ return `<div class="card hobby"><div class="hobby-img">${h.emoji}</div><div class="hobby-body"><span class="tag">${h.cat}</span><h3>${h.title}</h3><p class="muted">${h.desc}</p><div class="meta"><span>📍 ${h.distance}</span><span>💰 ${h.price}</span></div><p><b>${h.place}</b></p><div class="hobby-actions"><button class="btn light" onclick="saveHobby(${h.id})">${isSaved?'♥ Salvo':'♡ Salvar'}</button><button class="btn dark" onclick="showDetails(${h.id})">Ver detalhes</button></div></div></div>`
+}
+function saveHobby(id){if(saved.includes(id))saved=saved.filter(x=>x!==id);else saved.push(id);save();renderHobbies();renderSaved();renderProfile();toast(saved.includes(id)?"Hobby salvo!":"Hobby removido.")}
+function showDetails(id){const h=hobbies.find(x=>x.id===id);alert(`${h.title}\\n\\n${h.desc}\\n\\n📍 ${h.place}\\n📏 ${h.distance}\\n💰 ${h.price}\\n\\nNa versão futura, este botão abrirá o endereço real, mapa, horários e avaliações.`)}
+let realMap=null,userMarker=null,placeMarkers=[],foundPlaces=[],userPosition=null,lastSearchAt=0;
+function mapStatus(msg,error=false){const e=document.getElementById('mapStatus');if(e){e.textContent=msg;e.style.background=error?'#fff1f2':'#f5f3ff';e.style.color=error?'#9f1239':'#4c1d95';}}
+function initRealMap(){if(realMap||!document.getElementById('realMap')||!window.L)return;realMap=L.map('realMap').setView([-23.4543,-46.5337],12);L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png',{maxZoom:19,attribution:'&copy; <a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noopener">OpenStreetMap contributors</a>'}).addTo(realMap);setTimeout(()=>realMap.invalidateSize(),200);}
+function renderMap(){initRealMap();setTimeout(()=>{if(realMap)realMap.invalidateSize()},150);if(!foundPlaces.length)document.getElementById('mapCards').innerHTML='<div class="card"><p class="muted">Permita a localização e toque em “Buscar lugares”. Sem compartilhar localização, mova o mapa até a região desejada e faça a busca.</p></div>';}
+function locateMe(){if(!navigator.geolocation){mapStatus('Este navegador não oferece geolocalização. Tente abrir a página em um navegador atualizado.',true);return;}mapStatus('Solicitando permissão de localização…');navigator.geolocation.getCurrentPosition(pos=>{userPosition={lat:pos.coords.latitude,lon:pos.coords.longitude};initRealMap();const ll=[userPosition.lat,userPosition.lon];realMap.setView(ll,14);if(userMarker)realMap.removeLayer(userMarker);userMarker=L.circleMarker(ll,{radius:9,color:'#fff',weight:3,fillColor:'#6d4aff',fillOpacity:1}).addTo(realMap).bindPopup('Sua localização aproximada');mapStatus('Localização obtida. Agora toque em “Buscar lugares”.');},err=>{const msgs={1:'Permissão negada. Libere a localização nas configurações do navegador e tente novamente.',2:'Não foi possível determinar sua localização. Confira o GPS e tente novamente.',3:'A localização demorou demais. Tente novamente.'};mapStatus(msgs[err.code]||'Não foi possível obter a localização.',true);},{enableHighAccuracy:true,timeout:15000,maximumAge:60000});}
+function haversineKm(a,b,c,d){const r=x=>x*Math.PI/180,R=6371,dl=r(c-a),dn=r(d-b),x=Math.sin(dl/2)**2+Math.cos(r(a))*Math.cos(r(c))*Math.sin(dn/2)**2;return 2*R*Math.asin(Math.sqrt(x));}
+function esc(s){return String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));}
+function nameFor(t){return t.name||t.brand||t.operator||'Lugar sem nome';}function typeFor(t){return t.amenity||t.leisure||t.tourism||t.sport||t.craft||'Ponto de interesse';}
+function queryFor(cat,r,lat,lon){const a=`(around:${r},${lat},${lon})`;const q={all:`nwr${a}[name][amenity];nwr${a}[name][leisure];nwr${a}[name][tourism];nwr${a}[name][sport];`,sports:`nwr${a}[name][leisure~"^(sports_centre|pitch|fitness_centre|stadium|track)$"];nwr${a}[name][sport];nwr${a}[name][amenity~"^(gymnasium|dojo)$"];`,parks:`nwr${a}[name][leisure~"^(park|garden|nature_reserve|playground)$"];nwr${a}[name][natural~"^(wood|water)$"];`,culture:`nwr${a}[name][tourism~"^(museum|gallery|artwork|attraction)$"];nwr${a}[name][amenity~"^(theatre|arts_centre|library|community_centre)$"];`,food:`nwr${a}[name][amenity~"^(cafe|restaurant|fast_food|ice_cream|food_court)$"];`,arts:`nwr${a}[name][craft];nwr${a}[name][amenity~"^(arts_centre|music_school|dance_school)$"];nwr${a}[name][leisure~"^(dance|fitness_centre)$"];`};return q[cat]||q.all;}
+async function findPlaces(){initRealMap();if(!realMap||!window.L){mapStatus('O mapa não carregou. Confira a internet e recarregue a página.',true);return;}if(Date.now()-lastSearchAt<12000){mapStatus('Aguarde alguns segundos antes de buscar novamente, para respeitar os limites do serviço.',true);return;}lastSearchAt=Date.now();const c=userPosition||{lat:realMap.getCenter().lat,lon:realMap.getCenter().lng},r=Number(document.getElementById('searchRadius').value||5000),cat=document.getElementById('placeCategory').value;const query=`[out:json][timeout:25];(${queryFor(cat,r,c.lat,c.lon)});out center tags 60;`;const btn=document.getElementById('findPlacesBtn');btn.disabled=true;btn.textContent='Buscando…';mapStatus('Buscando lugares nos dados abertos…');try{const resp=await fetch('https://overpass-api.de/api/interpreter',{method:'POST',headers:{'Content-Type':'application/x-www-form-urlencoded;charset=UTF-8'},body:'data='+encodeURIComponent(query)});if(!resp.ok)throw new Error('Serviço temporariamente indisponível');const data=await resp.json(),seen=new Set();foundPlaces=(data.elements||[]).map(el=>{const lat=el.lat??el.center?.lat,lon=el.lon??el.center?.lon;if(typeof lat!=='number'||typeof lon!=='number')return null;const tags=el.tags||{},id=`${el.type}/${el.id}`;if(seen.has(id))return null;seen.add(id);const address=[tags['addr:street'],tags['addr:housenumber'],tags['addr:suburb']||tags['addr:neighbourhood'],tags['addr:city']].filter(Boolean).join(', ');return{id,lat,lon,tags,name:nameFor(tags),type:typeFor(tags),address:address||'Endereço não cadastrado',distance:haversineKm(c.lat,c.lon,lat,lon)};}).filter(Boolean).sort((a,b)=>a.distance-b.distance);placeMarkers.forEach(m=>realMap.removeLayer(m));placeMarkers=[];foundPlaces.forEach(p=>{const m=L.marker([p.lat,p.lon]).addTo(realMap);m.bindPopup(`<b>${esc(p.name)}</b><br>${esc(p.type)}<br>${p.distance.toFixed(1).replace('.',',')} km em linha reta<br><a href="https://www.openstreetmap.org/${p.id}" target="_blank" rel="noopener">Ver no OpenStreetMap</a>`);placeMarkers.push(m);});renderPlaceCards();if(foundPlaces.length){let bounds=L.latLngBounds(foundPlaces.map(p=>[p.lat,p.lon]));if(userPosition)bounds.extend([userPosition.lat,userPosition.lon]);realMap.fitBounds(bounds.pad(.15),{maxZoom:14});mapStatus(`${foundPlaces.length} lugar(es) encontrado(s). Distância estimada em linha reta, não por ruas.`);}else mapStatus('Nenhum lugar encontrado com esses filtros. Aumente o raio ou escolha outra categoria.');}catch(e){mapStatus('Não foi possível buscar agora. O serviço público pode estar ocupado; aguarde um pouco e tente novamente.',true);}finally{btn.disabled=false;btn.textContent='Buscar lugares';}}
+function renderPlaceCards(){const host=document.getElementById('mapCards');if(!host)return;const f=(document.getElementById('placeTextFilter')?.value||'').toLowerCase().trim(),list=foundPlaces.filter(p=>`${p.name} ${p.type} ${p.address}`.toLowerCase().includes(f));const count=document.getElementById('placeCount');if(count)count.textContent=`${list.length} lugar(es)`;host.innerHTML=list.length?list.map(p=>{const directions=`https://www.google.com/maps/dir/?api=1&destination=${p.lat},${p.lon}`,price=p.tags.fee==='no'?'Marcado como gratuito nos dados':p.tags.charge?`Preço informado: ${esc(p.tags.charge)}`:'Preço não informado — consulte o local';return `<article class="card place-card"><span class="tag">${esc(p.type)}</span><h3>${esc(p.name)}</h3><div class="place-meta">📍 ${p.distance.toFixed(1).replace('.',',')} km em linha reta</div><p class="muted">${esc(p.address)}</p><p class="muted">💰 ${price}</p><div class="hobby-actions"><button class="btn light" onclick="focusPlace('${esc(p.id)}')">Ver no mapa</button><a href="${directions}" target="_blank" rel="noopener">Como chegar ↗</a></div><p class="map-legend"><a href="https://www.openstreetmap.org/${p.id}" target="_blank" rel="noopener">Fonte: OpenStreetMap</a></p></article>`;}).join(''):'<div class="card"><p class="muted">Nenhum resultado corresponde ao filtro. Tente outra palavra ou faça uma nova busca.</p></div>';}
+function focusPlace(id){const p=foundPlaces.find(x=>x.id===id);if(!p||!realMap)return;realMap.setView([p.lat,p.lon],16);const m=placeMarkers.find(x=>{const ll=x.getLatLng();return Math.abs(ll.lat-p.lat)<1e-6&&Math.abs(ll.lng-p.lon)<1e-6;});if(m)m.openPopup();}
+
+function renderSaved(){const list=hobbies.filter(h=>saved.includes(h.id));document.getElementById('savedGrid').innerHTML=list.length?list.map(hobbyCard).join(''):'<div class="card"><p class="muted">Você ainda não salvou nenhum hobby. Vá em <b>Descobrir</b> para começar.</p></div>'}
+function openPost(){document.getElementById('modal').classList.add('show')}
+function closePost(){document.getElementById('modal').classList.remove('show')}
+async function publishPost(){
+ const title=document.getElementById('postTitle').value.trim(),text=document.getElementById('postText').value.trim(),rating=document.getElementById('postRating').value;
+ if(!title||!text){toast('Preencha título e experiência.');return;}
+ if(!currentUser){toast('Entre na sua conta para publicar.');return;}
+ const post={title,text,rating,date:new Date().toLocaleDateString('pt-BR'),author:profileData.name||currentUser.email||'Pessoa da Isis',photo:profileData.photo||'',location:profileData.location||''};
+ const {error}=await supabaseClient.from('isis_community_posts').insert({user_id:currentUser.id,title:post.title,body:post.text,rating:post.rating,author_name:post.author,author_photo:post.photo,location:post.location});
+ if(error){console.error(error);toast('Não foi possível publicar. Confira se você executou o SQL de configuração no Supabase.');return;}
+ posts.unshift(post);save();closePost();document.getElementById('postTitle').value='';document.getElementById('postText').value='';await loadCloudPosts();renderProfile();toast('Experiência publicada para a comunidade! 🎉');
+}
+function renderPosts(){
+ const all=[...posts];const host=document.getElementById('posts');if(!host)return;
+ if(!all.length){host.innerHTML='<div class="card"><p class="muted">Ainda não há publicações. Seja a primeira pessoa a compartilhar uma experiência!</p></div>';return;}
+ host.innerHTML=all.map((p,i)=>{const name=p.author||'Pessoa da comunidade',photo=p.photo||'';const avatar=photo?`<img src="${photo}" alt="Foto de ${escapeText(name)}" class="profile-photo" style="width:48px;height:48px">`:`<div class="avatar" style="flex:none">${escapeText(name.trim().charAt(0).toUpperCase()||'I')}</div>`;const canDelete=!!currentUser&&(isAdmin||p.user_id===currentUser.id);return `<div class="card post">${avatar}<div class="post-content">${isAdmin?'<div class="admin-pill">⚙ ADMINISTRADORA</div>':''}<button class="profile-link" onclick="openAuthorProfile(${i})">${escapeText(name)}</button><span class="muted"> · ${escapeText(p.date||'')}</span><h3 style="margin-top:9px">${escapeText(p.title)}</h3><p>${escapeText(p.text)}</p><b>⭐ ${escapeText(p.rating||'')}</b>${p.location?`<p class="muted">📍 ${escapeText(p.location)}</p>`:''}${canDelete&&p.id?`<div><button class="delete-post" onclick="deletePost(${Number(p.id)})">🗑 ${isAdmin&&p.user_id!==currentUser.id?'Excluir publicação de usuário':'Excluir publicação'}</button></div>`:''}</div></div>`;}).join('<div style="height:12px"></div>');
+}
+async function deletePost(id){
+ const post=posts.find(p=>Number(p.id)===Number(id));if(!post||!currentUser)return;
+ if(!(isAdmin||post.user_id===currentUser.id)){toast('Você não tem permissão para excluir esta publicação.');return;}
+ if(!confirm(isAdmin&&post.user_id!==currentUser.id?'Como administradora, deseja excluir esta publicação da comunidade?':'Deseja excluir sua publicação?'))return;
+ const {error}=await supabaseClient.from('isis_community_posts').delete().eq('id',id);
+ if(error){console.error(error);toast('Não foi possível excluir. Confira se a política de administrador foi configurada no Supabase.');return;}
+ posts=posts.filter(p=>Number(p.id)!==Number(id));localStorage.setItem('isisPosts',JSON.stringify(posts));renderPosts();renderProfile();toast('Publicação excluída.');
+}
+function openAuthorProfile(index){const p=posts[index];if(!p)return;alert(`${p.author||'Pessoa da comunidade'}\n${p.location||'Local não informado'}\n\n${p.bio||'A pessoa ainda não adicionou uma biografia pública.'}`)}
+function renderProfile(){
+ const el=id=>document.getElementById(id);if(el('statHobbies'))el('statHobbies').textContent=saved.length;if(el('statPosts'))el('statPosts').textContent=posts.length;if(el('statDone'))el('statDone').textContent=tasks.filter(x=>x.done).length;
+ if(el('profileName')&&document.activeElement!==el('profileName'))el('profileName').value=profileData.name||'';
+ if(el('profileAge')&&document.activeElement!==el('profileAge'))el('profileAge').value=profileData.age||'';
+ if(el('profileLocation')&&document.activeElement!==el('profileLocation'))el('profileLocation').value=profileData.location||'';
+ if(el('profileTagline')&&document.activeElement!==el('profileTagline'))el('profileTagline').value=profileData.tagline||'';
+ if(el('profileBio')&&document.activeElement!==el('profileBio'))el('profileBio').value=profileData.bio||'';
+ if(el('customAppName'))el('customAppName').value=customization.appName||'Isis';if(el('customColor'))el('customColor').value=customization.primary||'#6d4aff';if(el('customBg'))el('customBg').value=customization.bg||'#f6f7fb';if(el('customWelcome'))el('customWelcome').value=customization.welcome||'Organize seu dia e descubra algo novo.';
+ updateProfilePresentation();applyCustomization();
+}
+function updateProfilePresentation(){const name=profileData.name||'Seu perfil',bio=profileData.bio||profileData.tagline||'Conte um pouco sobre você.';const d=document.getElementById('profileDisplayName');if(d)d.textContent=name;const b=document.getElementById('profileBioPreview');if(b)b.textContent=bio;const initial=(profileData.name||'I').trim().charAt(0).toUpperCase();const init=document.getElementById('profileInitial');if(init){init.textContent=initial;init.style.display=profileData.photo?'none':'grid';}const img=document.getElementById('profilePhotoPreview');if(img){if(profileData.photo){img.src=profileData.photo;img.style.display='block';}else{img.removeAttribute('src');img.style.display='none';}}const av=document.getElementById('headerAvatar');if(av){if(profileData.photo){av.innerHTML=`<img alt="" src="${profileData.photo}" style="width:44px;height:44px;object-fit:cover;border-radius:50%">`;}else av.textContent=initial;}document.querySelectorAll('.greeting h1').forEach(x=>{if(document.getElementById('home').classList.contains('active'))x.textContent=`Olá, ${profileData.name||'Babi'}! 👋`;});}
+function saveProfile(){profileData={...profileData,name:document.getElementById('profileName').value.trim(),age:document.getElementById('profileAge').value,location:document.getElementById('profileLocation').value.trim(),tagline:document.getElementById('profileTagline').value.trim(),bio:document.getElementById('profileBio').value.trim()};localStorage.setItem('isisProfile',JSON.stringify(profileData));save();updateProfilePresentation();renderPosts();toast('Perfil salvo e sincronizado!');}
+function uploadProfilePhoto(event){const file=event.target.files?.[0];if(!file)return;if(!file.type.startsWith('image/')){toast('Escolha um arquivo de imagem.');return;}if(file.size>2*1024*1024){toast('Escolha uma foto de até 2 MB para não ocupar muito espaço.');return;}const reader=new FileReader();reader.onload=()=>{profileData.photo=reader.result;try{localStorage.setItem('isisProfile',JSON.stringify(profileData));save();updateProfilePresentation();renderPosts();toast('Foto atualizada e sincronizada!');}catch(e){toast('A foto excede o espaço disponível do navegador. Tente uma imagem menor.');}};reader.readAsDataURL(file);}
+function applyCustomization(){const c=customization.primary||'#6d4aff',bg=customization.bg||'#f6f7fb';document.documentElement.style.setProperty('--primary',c);document.documentElement.style.setProperty('--primary2',c);document.documentElement.style.setProperty('--bg',bg);const appName=customization.appName||'Isis';document.querySelectorAll('.logo').forEach(x=>x.innerHTML=`${escapeText(appName)}<span>✦</span>`);const sub=document.getElementById('pageSub');if(sub&&document.getElementById('home').classList.contains('active'))sub.textContent=customization.welcome||'Organize seu dia e descubra algo novo.';updateCustomizationPreview();}
+function updateCustomizationPreview(){const appName=(document.getElementById('customAppName')?.value||'Isis').trim()||'Isis',welcome=(document.getElementById('customWelcome')?.value||'Organize seu dia e descubra algo novo.').trim()||'Organize seu dia e descubra algo novo.',c=document.getElementById('customColor')?.value||'#6d4aff',bg=document.getElementById('customBg')?.value||'#f6f7fb';const name=document.getElementById('customPreviewName'),txt=document.getElementById('customPreviewText'),bar=document.getElementById('customPreviewBar'),chip=document.getElementById('customPreviewChip'),mini=document.querySelector('.preview-mini'),label=document.getElementById('customColorLabel');if(name)name.textContent=appName+' ✦';if(txt)txt.textContent=welcome;if(bar)bar.style.background=c;if(chip){chip.style.color=c;chip.style.background=c+'18';}if(mini)mini.style.background=bg;if(label)label.textContent=c.toUpperCase();document.querySelectorAll('.swatch').forEach(b=>b.classList.toggle('active',(b.getAttribute('onclick')||'').includes(`'${c}'`)));}
+function chooseTheme(c,bg,button){document.getElementById('customColor').value=c;document.getElementById('customBg').value=bg;updateCustomizationPreview();}
+function saveCustomization(){customization={appName:document.getElementById('customAppName').value.trim()||'Isis',primary:document.getElementById('customColor').value,bg:document.getElementById('customBg').value,welcome:document.getElementById('customWelcome').value.trim()||'Organize seu dia e descubra algo novo.'};localStorage.setItem('isisCustomization',JSON.stringify(customization));save();applyCustomization();toast('Personalização aplicada!');}
+function resetCustomization(){customization={appName:'Isis',primary:'#6d4aff',bg:'#f6f7fb',welcome:'Organize seu dia e descubra algo novo.'};localStorage.setItem('isisCustomization',JSON.stringify(customization));save();renderProfile();toast('Personalização restaurada.');}
+function showAuthFeedback(message,type='error'){const el=document.getElementById('authFeedback');if(!el)return;el.textContent=message;el.className='auth-feedback show '+type;}
+function toggleAuthMode(){authMode=authMode==='signup'?'login':'signup';document.getElementById('authHeading').textContent=authMode==='signup'?'Bem-vinda à Isis':'Entre na sua conta Isis';document.getElementById('authSub').textContent=authMode==='signup'?'Crie sua conta para sincronizar perfil, tarefas e experiências com a nuvem.':'Entre com seu e-mail e senha do Supabase.';document.getElementById('authAction').textContent=authMode==='signup'?'Criar conta':'Entrar';document.getElementById('authToggle').textContent=authMode==='signup'?'Já tenho uma conta':'Criar conta nova';document.getElementById('authPassword').autocomplete=authMode==='signup'?'new-password':'current-password';const feedback=document.getElementById('authFeedback');if(feedback){feedback.className='auth-feedback';feedback.textContent='';}}
+async function submitAuth(){
+ const btn=document.getElementById('authAction');
+ if(!supabaseClient){showAuthFeedback('A biblioteca de login não carregou. Confira a conexão com a internet, abra o arquivo no Chrome e atualize a página.');return;}
+ const email=document.getElementById('authEmail').value.trim().toLowerCase(),password=document.getElementById('authPassword').value;
+ if(!email||!email.includes('@')){showAuthFeedback('Digite o e-mail usado no cadastro.');return;}
+ if(!password||password.length<6){showAuthFeedback('Digite sua senha. Ela precisa ter pelo menos 6 caracteres.');return;}
+ btn.disabled=true;btn.textContent='Conectando…';showAuthFeedback('Conectando à sua conta. Aguarde um instante.','info');
+ try{
+  let result;
+  if(authMode==='signup') result=await supabaseClient.auth.signUp({email,password});
+  else result=await supabaseClient.auth.signInWithPassword({email,password});
+  if(result.error)throw result.error;
+  if(authMode==='signup'&&!result.data.session){showAuthFeedback('Cadastro criado. Confira sua caixa de entrada e o spam para confirmar o e-mail; depois volte e toque em “Já tenho uma conta”.','success');return;}
+  currentUser=result.data.user||result.data.session?.user||null;
+  if(currentUser){await loadCloudData();document.getElementById('authScreen').classList.remove('show');toast('Você entrou na Isis!');}
+  else{showAuthFeedback('O Supabase não retornou uma sessão. Se você acabou de criar a conta, confirme seu e-mail e tente entrar novamente.');}
+ }catch(e){
+  console.error('Erro ao entrar na Isis:',e);
+  const raw=(e&&e.message)?e.message:String(e||'Erro desconhecido');
+  const low=raw.toLowerCase();let msg='Não foi possível entrar. Confira sua internet e tente novamente.';
+  if(low.includes('invalid login credentials')||low.includes('invalid email or password')||low.includes('invalid password'))msg='E-mail ou senha incorretos. Use exatamente os dados cadastrados.';
+  else if(low.includes('email not confirmed'))msg='Seu e-mail ainda não foi confirmado. Confira sua caixa de entrada e a pasta de spam.';
+  else if(low.includes('failed to fetch')||low.includes('network'))msg='A Isis não conseguiu se conectar ao Supabase. Verifique a internet e abra o arquivo no Google Chrome, não no visualizador de arquivos.';
+  else if(low.includes('too many requests'))msg='Muitas tentativas seguidas. Espere alguns minutos e tente novamente.';
+  else if(raw)msg='O login retornou este erro: '+raw;
+  showAuthFeedback(msg);
+ }finally{btn.disabled=false;btn.textContent=authMode==='signup'?'Criar conta':'Entrar';}
+}
+async function loadAdminStatus(){
+ isAdmin=false;if(!supabaseClient||!currentUser)return;
+ try{const {data,error}=await supabaseClient.from('isis_admins').select('user_id').eq('user_id',currentUser.id).maybeSingle();if(error)throw error;isAdmin=!!data;}catch(e){console.warn('Status de administrador não carregado; confira a tabela isis_admins no SQL.',e);isAdmin=false;}
+ const note=document.getElementById('adminModerationNote');if(note)note.style.display=isAdmin?'block':'none';
+}
+async function loadCloudData(){
+ if(!supabaseClient||!currentUser)return;
+ cloudReady=false;
+ try{
+  await loadAdminStatus();
+  const {data,error}=await supabaseClient.from('isis_user_data').select('data').eq('user_id',currentUser.id).maybeSingle();
+  if(error)throw error;
+  if(data?.data){const d=data.data;tasks=Array.isArray(d.tasks)?d.tasks:tasks;saved=Array.isArray(d.saved)?d.saved:saved;profileData=d.profile||profileData;customization=d.customization||customization;}
+  else{
+   // Import this browser's current prototype data into the new account on first sign-in.
+   await supabaseClient.from('isis_user_data').upsert({user_id:currentUser.id,data:{profile:profileData,customization,tasks,saved},updated_at:new Date().toISOString()},{onConflict:'user_id'});
+  }
+  localStorage.setItem('isisTasks',JSON.stringify(tasks));localStorage.setItem('isisSaved',JSON.stringify(saved));localStorage.setItem('isisProfile',JSON.stringify(profileData));localStorage.setItem('isisCustomization',JSON.stringify(customization));
+  cloudReady=true;renderTasks();renderHome();renderHobbies();renderSaved();renderProfile();applyCustomization();await loadCloudPosts();
+ }catch(e){console.error(e);toast('Não consegui carregar os dados da nuvem. Confira se executou o SQL de configuração.');cloudReady=true;}
+}
+async function loadCloudPosts(){
+ if(!supabaseClient||!currentUser)return;
+ const {data,error}=await supabaseClient.from('isis_community_posts').select('id,user_id,title,body,rating,author_name,author_photo,location,created_at').order('created_at',{ascending:false}).limit(100);
+ if(error){console.error(error);return;}
+ posts=(data||[]).map(p=>({id:p.id,user_id:p.user_id,title:p.title,text:p.body,rating:p.rating,author:p.author_name||'Pessoa da comunidade',photo:p.author_photo||'',location:p.location||'',date:p.created_at?new Date(p.created_at).toLocaleDateString('pt-BR'):'',bio:''}));
+ localStorage.setItem('isisPosts',JSON.stringify(posts));renderPosts();
+}
+async function logoutLocal(){if(supabaseClient)await supabaseClient.auth.signOut();currentUser=null;cloudReady=false;document.getElementById('authScreen').classList.add('show');document.getElementById('authEmail').value='';document.getElementById('authPassword').value='';authMode='login';toggleAuthMode();}
+async function ensureAuth(){
+ document.getElementById('authScreen').classList.add('show');
+ if(!supabaseClient){toast('Não foi possível carregar o Supabase. Verifique a internet.');return;}
+ const {data,error}=await supabaseClient.auth.getSession();
+ if(error){console.error(error);return;}
+ if(data.session?.user){currentUser=data.session.user;await loadAdminStatus();await loadCloudData();document.getElementById('authScreen').classList.remove('show');}
+ else{currentUser=null;cloudReady=false;}
+}
+function toast(msg){const t=document.getElementById('toast');t.textContent=msg;t.style.display='block';setTimeout(()=>t.style.display='none',2200)}
+renderHome();renderTasks();renderPosts();renderProfile();applyCustomization();ensureAuth();
+</script>
+</body>
+</html>
